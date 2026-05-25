@@ -1,0 +1,246 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ── UIWiz design tokens ── */
+:root {
+  --bg-base: #080C14;
+  --bg-surface: #0D1120;
+  --bg-elevated: #141828;
+  --bg-hover: #1C2236;
+
+  --accent-primary: #FF6B35;
+  --accent-glow: rgba(255, 107, 53, 0.25);
+  --accent-dim: rgba(255, 107, 53, 0.1);
+  --accent-blue: #4D9CFF;
+  --accent-green: #22C55E;
+
+  --text-primary: #E8ECF4;
+  --text-secondary: #8892AA;
+  --text-muted: #4A5275;
+
+  --border-subtle: #1A2038;
+  --border-medium: #232A42;
+  --border-accent: rgba(255, 107, 53, 0.3);
+
+  /* Tailwind HSL compat */
+  --background: 222 44% 6%;
+  --foreground: 220 31% 93%;
+  --card: 228 36% 8%;
+  --card-foreground: 220 31% 93%;
+  --popover: 228 36% 8%;
+  --popover-foreground: 220 31% 93%;
+  --primary: 18 100% 60%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 228 30% 12%;
+  --secondary-foreground: 220 14% 60%;
+  --muted: 228 30% 12%;
+  --muted-foreground: 228 22% 37%;
+  --accent: 18 100% 60%;
+  --accent-foreground: 0 0% 100%;
+  --border: 228 37% 16%;
+  --input: 228 37% 16%;
+  --ring: 18 100% 60%;
+  --radius: 0.75rem;
+
+  --font-display: 'JetBrains Mono', monospace;
+  --font-sans: 'IBM Plex Sans', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+}
+
+@layer base {
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    background-color: var(--bg-base);
+    color: var(--text-primary);
+    font-family: 'IBM Plex Sans', sans-serif;
+    height: 100%;
+    -webkit-font-smoothing: antialiased;
+  }
+  h1, h2, h3, h4, h5, h6 { font-family: 'JetBrains Mono', monospace; }
+  code, pre { font-family: 'JetBrains Mono', monospace; }
+}
+
+/* ── Scrollbar ── */
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: var(--bg-surface); }
+::-webkit-scrollbar-thumb { background: var(--border-medium); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+
+/* ── Shimmer skeleton ── */
+.shimmer {
+  background: linear-gradient(90deg, var(--bg-elevated) 25%, var(--bg-hover) 50%, var(--bg-elevated) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+/* ── Glow text ── */
+.glow-text { text-shadow: 0 0 30px var(--accent-glow), 0 0 60px rgba(255,107,53,0.12); }
+
+/* ── Grid background ── */
+.bg-grid {
+  background-image:
+    linear-gradient(var(--border-subtle) 1px, transparent 1px),
+    linear-gradient(90deg, var(--border-subtle) 1px, transparent 1px);
+  background-size: 60px 60px;
+}
+
+/* ── Typing dots ── */
+.typing-dot {
+  display: inline-block;
+  width: 5px; height: 5px;
+  border-radius: 50%;
+  background: var(--accent-primary);
+  animation: pulse_dot 1.4s ease-in-out infinite both;
+}
+.typing-dot:nth-child(1) { animation-delay: 0s; }
+.typing-dot:nth-child(2) { animation-delay: 0.2s; }
+.typing-dot:nth-child(3) { animation-delay: 0.4s; }
+@keyframes pulse_dot {
+  0%, 80%, 100% { transform: scale(0); opacity: 0.3; }
+  40% { transform: scale(1); opacity: 1; }
+}
+
+/* ── Generating progress bar ── */
+@keyframes gen-slide {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(400%); }
+}
+.gen-bar::after {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(255,107,53,0.8), transparent);
+  animation: gen-slide 1.6s ease-in-out infinite;
+}
+
+/* ── Sandpack ── */
+.sp-wrapper { height: 100% !important; }
+.sp-layout { height: 100% !important; border: none !important; background: var(--bg-surface) !important; }
+.sp-preview { height: 100% !important; }
+
+/* ── Dot grid (chat empty state) ── */
+.dot-grid {
+  background-image: radial-gradient(circle, rgba(255, 107, 53, 0.14) 1px, transparent 1px);
+  background-size: 22px 22px;
+}
+
+/* ── Blueprint grid (preview empty state) ── */
+.blueprint-grid {
+  background-color: #080C14;
+  background-image:
+    linear-gradient(rgba(77, 156, 255, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(77, 156, 255, 0.05) 1px, transparent 1px);
+  background-size: 28px 28px;
+}
+
+/* ── Float animation ── */
+@keyframes float {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  40% { transform: translateY(-5px) rotate(-1.5deg); }
+  70% { transform: translateY(-3px) rotate(1deg); }
+}
+.animate-float { animation: float 4s ease-in-out infinite; }
+
+/* ── Staggered entry ── */
+@keyframes fade-slide-up {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.fade-slide-up {
+  animation: fade-slide-up 0.32s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* ── Generating pulse dot ── */
+@keyframes gen-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.35; }
+}
+.animate-gen-pulse { animation: gen-pulse 1.4s ease-in-out infinite; }
+
+/* ── Input focus-within ring ── */
+.chat-input-wrap { transition: border-color 0.15s cubic-bezier(0.22, 1, 0.36, 1); }
+.chat-input-wrap:focus-within { border-color: rgba(255, 107, 53, 0.45) !important; }
+
+/* ── Version timeline rail ── */
+.version-rail {
+  position: absolute;
+  left: 14px;
+  top: 20px;
+  bottom: 20px;
+  width: 1px;
+  background: repeating-linear-gradient(
+    to bottom,
+    #1A2038 0px,
+    #1A2038 4px,
+    transparent 4px,
+    transparent 8px
+  );
+}
+
+/* ── Interactive element hover transition ── */
+.hover-transition {
+  transition: color 150ms cubic-bezier(0.22, 1, 0.36, 1),
+              background-color 150ms cubic-bezier(0.22, 1, 0.36, 1),
+              border-color 150ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* ── Global focus-visible ring ── */
+/* Replaces the default browser outline with a branded coral ring */
+:focus-visible {
+  outline: 2px solid rgba(255, 107, 53, 0.65);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+/* Remove from elements that provide their own focus treatment */
+textarea:focus-visible,
+input:focus-visible {
+  outline: none;
+}
+
+/* ── cursor-pointer on interactive role=button divs ── */
+[role="button"] {
+  cursor: pointer;
+}
+
+/* ── Cursor blink (terminal demo) ── */
+@keyframes cursor-blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+.cursor-blink { animation: cursor-blink 1s step-end infinite; }
+
+/* ── Marquee scroll ── */
+@keyframes marquee-scroll {
+  from { transform: translateX(0); }
+  to { transform: translateX(-33.333%); }
+}
+.marquee-track { animation: marquee-scroll 28s linear infinite; }
+
+/* ── Landing section fade-in-up (CSS fallback) ── */
+@keyframes section-up {
+  from { opacity: 0; transform: translateY(24px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Subtle dot pulse (badge status) ── */
+@keyframes status-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(0.8); }
+}
+.status-pulse { animation: status-pulse 2s ease-in-out infinite; }
+
+/* ── prefers-reduced-motion: disable all decorative animations ── */
+@media (prefers-reduced-motion: reduce) {
+  .animate-float { animation: none !important; }
+  .fade-slide-up { animation: none !important; opacity: 1 !important; transform: none !important; }
+  .animate-gen-pulse { animation: none !important; }
+  .gen-bar::after { animation: none !important; }
+  .typing-dot { animation: none !important; opacity: 1 !important; transform: scale(1) !important; }
+  .cursor-blink { animation: none !important; }
+  .marquee-track { animation: none !important; }
+  .status-pulse { animation: none !important; }
+}

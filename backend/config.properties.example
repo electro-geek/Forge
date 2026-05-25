@@ -1,0 +1,36 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# UIWiz backend config template
+# Copy to config.properties and fill in real values before starting.
+#
+#   cp backend/config.properties.example backend/config.properties
+#
+# This file is mounted read-only into the backend and celery_worker containers.
+# It is gitignored — never commit the real config.properties.
+# ─────────────────────────────────────────────────────────────────────────────
+
+[database]
+# asyncpg URL used by the FastAPI server
+url = postgresql+asyncpg://postgres:password@postgres:5432/uiwiz
+pool_size = 10
+
+[redis]
+url = redis://redis:6379/0
+celery_broker = redis://redis:6379/0
+# Use a separate DB index for Celery results
+celery_backend = redis://redis:6379/1
+
+[firebase]
+project_id = your-firebase-project-id
+# Path inside the container — matches the volume mount in docker-compose.yml
+credentials_path = ./firebase-service-account.json
+
+[security]
+# Strong random string (32+ chars) used to derive the Fernet key that
+# encrypts stored Gemini API keys.  NEVER change this after first launch —
+# doing so invalidates all encrypted keys in the database.
+secret_key = change-me-to-a-long-random-string
+
+[app]
+debug = false
+# Comma-separated list of allowed CORS origins
+cors_origins = http://localhost:3000

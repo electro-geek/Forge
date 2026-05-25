@@ -1,0 +1,23 @@
+# Dependencies — reinstalled inside the image
+node_modules/
+
+# Next.js build output — rebuilt inside the image
+.next/
+out/
+
+# Env files — passed as build args or mounted at runtime, never baked in
+.env
+.env.*
+.env.local
+.env.*.local
+
+# TypeScript build cache
+*.tsbuildinfo
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS
+.DS_Store
+Thumbs.db

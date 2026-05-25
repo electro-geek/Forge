@@ -1,0 +1,142 @@
+# ────────────────────────────────────────────────────────────────
+# UIWiz — monorepo .gitignore
+# Covers: Next.js frontend · FastAPI backend · Celery · Docker
+# ────────────────────────────────────────────────────────────────
+
+# ── Secrets & credentials ──────────────────────────────────────
+.env
+.env.*
+!.env.example
+!.env.template
+!.env.sample
+
+# Backend config (contains DB URL, secret key, API keys)
+backend/config.properties
+!backend/config.properties.example
+
+# Firebase service account keys (any naming convention)
+backend/firebase-service-account.json
+backend/serviceAccountKey.json
+*-firebase-adminsdk-*.json
+serviceAccountKey.json
+
+# TLS / certificate files
+*.pem
+*.key
+*.crt
+*.cert
+*.p12
+*.pfx
+
+# ── Node / Next.js ─────────────────────────────────────────────
+node_modules/
+.next/
+out/
+
+# TypeScript build info
+*.tsbuildinfo
+
+# Next.js specific env files
+frontend/.env
+frontend/.env.local
+frontend/.env.development.local
+frontend/.env.test.local
+frontend/.env.production.local
+
+# Debug logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# Turbo
+.turbo/
+
+# Vercel
+.vercel/
+
+# ── Python / FastAPI ───────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+.venv/
+venv/
+env/
+.env/
+ENV/
+
+# Distribution / packaging
+dist/
+build/
+*.egg-info/
+*.egg
+.eggs/
+*.whl
+MANIFEST
+
+# ── Testing & coverage ─────────────────────────────────────────
+.pytest_cache/
+.coverage
+.coverage.*
+coverage.xml
+coverage/
+htmlcov/
+*.cover
+.nyc_output/
+nosetests.xml
+pytest.xml
+
+# ── Type checkers ──────────────────────────────────────────────
+.mypy_cache/
+.dmypy.json
+dmypy.json
+.pytype/
+.pyre/
+
+# ── Linters ────────────────────────────────────────────────────
+.ruff_cache/
+
+# ── Celery ─────────────────────────────────────────────────────
+celerybeat-schedule
+celerybeat-schedule.db
+celerybeat.pid
+*.log
+
+# ── Database files ─────────────────────────────────────────────
+*.sqlite
+*.sqlite3
+*.db
+
+# ── Docker ─────────────────────────────────────────────────────
+# docker-compose.override.yml is for local dev overrides — keep ignored
+docker-compose.override.yml
+# NOTE: .dockerignore should be committed — do NOT add it here
+
+# ── OS ─────────────────────────────────────────────────────────
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+# ── IDE & editors ──────────────────────────────────────────────
+.vscode/
+.idea/
+*.iml
+*.swp
+*.swo
+*~
+.project
+.classpath
+.settings/
+
+# ── Misc ───────────────────────────────────────────────────────
+*.bak
+*.tmp
+*.orig
+logs/
