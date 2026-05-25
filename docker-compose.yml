@@ -8,9 +8,6 @@
 # Start everything:
 #   docker compose up --build
 
-env_file:
-  - ./frontend/.env
-
 services:
 
   # ── Redis ───────────────────────────────────────────────────────────────────

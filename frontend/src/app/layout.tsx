@@ -3,7 +3,7 @@ import { Toaster } from "sonner";
 import Script from "next/script";
 import "./globals.css";
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://uiwiz.app";
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://uiwiz.live";
 
 export const viewport: Viewport = {
   themeColor: "#080C14",
