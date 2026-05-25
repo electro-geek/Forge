@@ -8,6 +8,9 @@
 # Start everything:
 #   docker compose up --build
 
+env_file:
+  - ./frontend/.env
+
 services:
 
   # ── Redis ───────────────────────────────────────────────────────────────────
@@ -33,14 +36,15 @@ services:
     container_name: uiwiz_backend
     restart: unless-stopped
     ports:
-      - "8000:8000"
+      - "8002:8000"
     volumes:
       # Mount secrets from host — read-only, never baked into the image
       - ./backend/config.properties:/app/config.properties:ro
       - ./backend/firebase-service-account.json:/app/firebase-service-account.json:ro
+      - ./frontend/.env:/app/.env:ro
+    env_file:
+      - ./frontend/.env
     depends_on:
-      postgres:
-        condition: service_healthy
       redis:
         condition: service_healthy
 
@@ -56,9 +60,10 @@ services:
       # Same secrets as the API server
       - ./backend/config.properties:/app/config.properties:ro
       - ./backend/firebase-service-account.json:/app/firebase-service-account.json:ro
+      - ./frontend/.env:/app/.env:ro
+    env_file:
+      - ./frontend/.env
     depends_on:
-      postgres:
-        condition: service_healthy
       redis:
         condition: service_healthy
       backend:
@@ -79,14 +84,15 @@ services:
         NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN: ${NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN}
         NEXT_PUBLIC_FIREBASE_PROJECT_ID: ${NEXT_PUBLIC_FIREBASE_PROJECT_ID}
         NEXT_PUBLIC_SITE_URL: ${NEXT_PUBLIC_SITE_URL:-}
-    # Mount the env file for any server-side runtime variables (non-NEXT_PUBLIC_)
+    # Load env variables into the process
     env_file:
-      - path: ./frontend/.env.local
-        required: false
+      - ./frontend/.env
     container_name: uiwiz_frontend
     restart: unless-stopped
     ports:
-      - "3000:3000"
+      - "3002:3000"
+    volumes:
+      - ./frontend/.env:/app/.env:ro
     depends_on:
       - backend
 
