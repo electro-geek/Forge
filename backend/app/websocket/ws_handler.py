@@ -1,9 +1,12 @@
 import json
 import asyncio
+import logging
 import redis.asyncio as aioredis
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect, Query
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
+
+logger = logging.getLogger(__name__)
 
 from app.core.config import settings
 from app.db.database import AsyncSessionLocal
@@ -124,22 +127,34 @@ async def websocket_endpoint(
                     continue
 
                 skill = msg.get("skill", "dark_pro")
-                run_generation.delay(
-                    user_id=user.id,
-                    project_id=project_id,
-                    session_id=session_id,
-                    prompt=prompt,
-                    encrypted_key=api_key_record.encrypted_key,
-                    skill=skill,
-                )
+                try:
+                    run_generation.delay(
+                        user_id=user.id,
+                        project_id=project_id,
+                        session_id=session_id,
+                        prompt=prompt,
+                        encrypted_key=api_key_record.encrypted_key,
+                        skill=skill,
+                    )
+                except Exception as e:
+                    logger.error("Failed to enqueue generation task: %s: %s", type(e).__name__, e)
+                    await websocket.send_json({
+                        "type": "error",
+                        "content": "Failed to start generation. Is the worker running?",
+                    })
+                    continue
 
                 # Drain Redis events until done/error, with timeout
                 await drain_redis_to_ws()
 
     except WebSocketDisconnect:
         pass
-    except Exception:
-        pass
+    except Exception as e:
+        logger.error("WebSocket handler error: %s: %s", type(e).__name__, e)
+        try:
+            await websocket.send_json({"type": "error", "content": "Internal server error"})
+        except Exception:
+            pass
     finally:
         await pubsub.unsubscribe(channel)
         await pubsub.aclose()

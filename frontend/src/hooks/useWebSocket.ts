@@ -26,10 +26,14 @@ export function useWebSocket() {
     const token = await auth.currentUser?.getIdToken();
     if (!token) throw new Error("Not authenticated");
 
+    const wsUrl = `${WS_URL}/ws/${sessionId}?token=${token}`;
+    console.log("[WS] connecting to", wsUrl);
+
     return new Promise((resolve, reject) => {
-      const ws = new WebSocket(`${WS_URL}/ws/${sessionId}?token=${token}`);
+      const ws = new WebSocket(wsUrl);
 
       ws.onopen = () => {
+        console.log("[WS] connected");
         wsRef.current = ws;
         resolve(ws);
       };
@@ -39,8 +43,12 @@ export function useWebSocket() {
         handleEvent(data, sessionId);
       };
 
-      ws.onerror = () => reject(new Error("WebSocket connection failed"));
-      ws.onclose = () => {
+      ws.onerror = (e) => {
+        console.error("[WS] connection error", e, "url:", wsUrl);
+        reject(new Error("WebSocket connection failed"));
+      };
+      ws.onclose = (e) => {
+        console.log("[WS] closed", e.code, e.reason);
         wsRef.current = null;
         setGenerating(false);
       };
