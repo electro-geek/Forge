@@ -6,7 +6,12 @@ import { useProjectStore } from "@/store/projectStore";
 import { WSEvent, Message, ProjectVersion } from "@/types";
 import { toast } from "sonner";
 
-const WS_URL = process.env.NEXT_PUBLIC_WS_URL || "ws://localhost:8000";
+// Auto-upgrade ws:// → wss:// on HTTPS pages to prevent mixed-content errors
+const _rawWsUrl = process.env.NEXT_PUBLIC_WS_URL || "ws://localhost:8000";
+const WS_URL =
+  typeof window !== "undefined" && window.location.protocol === "https:"
+    ? _rawWsUrl.replace(/^ws:\/\//, "wss://")
+    : _rawWsUrl;
 
 export function useWebSocket() {
   const wsRef = useRef<WebSocket | null>(null);
