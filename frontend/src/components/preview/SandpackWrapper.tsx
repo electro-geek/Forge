@@ -136,19 +136,15 @@ export default function SandpackWrapper() {
   }
 
   // Sandpack's nextjs template ships pages/_app.js and pages/index.js by default.
-  // If Gemini generated .tsx versions, both .js and .tsx exist for the same route
-  // which makes Next.js throw "two pages with the same route". Override the .js
-  // defaults with the .tsx content so only one file wins.
-  for (const [path, content] of Object.entries(sandpackFiles)) {
-    if (path.startsWith("/pages/") && path.endsWith(".tsx")) {
-      const jsPath = path.replace(".tsx", ".js");
-      sandpackFiles[jsPath] = content;
-      delete sandpackFiles[path];
-    }
-    if (path.startsWith("/components/") && path.endsWith(".tsx")) {
-      const jsxPath = path.replace(".tsx", ".jsx");
-      sandpackFiles[jsxPath] = content;
-      delete sandpackFiles[path];
+  // If Gemini generated .tsx versions, delete the conflicting .js defaults so only
+  // one file exists per route. Keep .tsx files as-is — Sandpack's Next.js template
+  // handles TypeScript natively, and renaming .tsx→.js corrupts TypeScript syntax.
+  for (const path of Object.keys(sandpackFiles)) {
+    if (path.endsWith(".tsx") || path.endsWith(".ts")) {
+      const jsEquivalent = path.replace(/\.tsx$/, ".js").replace(/\.ts$/, ".js");
+      const jsxEquivalent = path.replace(/\.tsx$/, ".jsx");
+      delete sandpackFiles[jsEquivalent];
+      delete sandpackFiles[jsxEquivalent];
     }
   }
 
@@ -174,6 +170,7 @@ module.exports = {
   const entryFile =
     sandpackFiles["/pages/index.js"] ? "/pages/index.js" :
     sandpackFiles["/pages/index.jsx"] ? "/pages/index.jsx" :
+    sandpackFiles["/pages/index.tsx"] ? "/pages/index.tsx" :
     Object.keys(sandpackFiles)[0];
 
   return (
