@@ -29,41 +29,11 @@ async def list_versions(
 
     result = await db.execute(
         select(ProjectVersion)
+        .options(selectinload(ProjectVersion.files))
         .where(ProjectVersion.project_id == project_id)
         .order_by(ProjectVersion.version_number.desc())
     )
     return result.scalars().all()
-
-
-@router.get("/{project_id}/{version_id}", response_model=VersionOut)
-async def get_version(
-    project_id: str,
-    version_id: str,
-    current_user: User = Depends(get_current_user),
-    db: AsyncSession = Depends(get_db),
-):
-    """Get a single version with its files."""
-    proj_result = await db.execute(
-        select(Project).where(
-            Project.id == project_id,
-            Project.user_id == current_user.id,
-        )
-    )
-    if not proj_result.scalar_one_or_none():
-        raise HTTPException(status_code=404, detail="Project not found")
-
-    result = await db.execute(
-        select(ProjectVersion)
-        .options(selectinload(ProjectVersion.files))
-        .where(
-            ProjectVersion.id == version_id,
-            ProjectVersion.project_id == project_id,
-        )
-    )
-    version = result.scalar_one_or_none()
-    if not version:
-        raise HTTPException(status_code=404, detail="Version not found")
-    return version
 
 
 @router.get("/{project_id}/latest", response_model=VersionOut)
@@ -94,6 +64,37 @@ async def get_latest_version(
     version = result.scalar_one_or_none()
     if not version:
         raise HTTPException(status_code=404, detail="No versions yet")
+    return version
+
+
+@router.get("/{project_id}/{version_id}", response_model=VersionOut)
+async def get_version(
+    project_id: str,
+    version_id: str,
+    current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
+    """Get a single version with its files."""
+    proj_result = await db.execute(
+        select(Project).where(
+            Project.id == project_id,
+            Project.user_id == current_user.id,
+        )
+    )
+    if not proj_result.scalar_one_or_none():
+        raise HTTPException(status_code=404, detail="Project not found")
+
+    result = await db.execute(
+        select(ProjectVersion)
+        .options(selectinload(ProjectVersion.files))
+        .where(
+            ProjectVersion.id == version_id,
+            ProjectVersion.project_id == project_id,
+        )
+    )
+    version = result.scalar_one_or_none()
+    if not version:
+        raise HTTPException(status_code=404, detail="Version not found")
     return version
 
 

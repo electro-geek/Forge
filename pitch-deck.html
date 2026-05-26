@@ -1,0 +1,1470 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>UIWiz — Founder Introduction</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,900&family=JetBrains+Mono:wght@400;500;700&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --bg:        #070707;
+      --bg-card:   #0f0f0f;
+      --bg-lift:   #161616;
+      --amber:     #e8970a;
+      --amber-dim: #a36b07;
+      --teal:      #00c9a0;
+      --red:       #e8503a;
+      --text:      #f0ede6;
+      --muted:     #7a7672;
+      --line:      #1e1e1e;
+      --mono: 'JetBrains Mono', monospace;
+      --serif: 'Playfair Display', Georgia, serif;
+      --sans: 'DM Sans', system-ui, sans-serif;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      width: 100%; height: 100%;
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--sans);
+      overflow: hidden;
+      cursor: default;
+    }
+
+    /* ─── PROGRESS BAR ─────────────────────────────────── */
+    #progress {
+      position: fixed; top: 0; left: 0; height: 2px;
+      background: var(--amber);
+      transition: width 0.5s cubic-bezier(0.4,0,0.2,1);
+      z-index: 100;
+      box-shadow: 0 0 12px var(--amber);
+    }
+
+    /* ─── NAV ─────────────────────────────────────────── */
+    #nav {
+      position: fixed; bottom: 36px; left: 50%;
+      transform: translateX(-50%);
+      display: flex; align-items: center; gap: 20px;
+      z-index: 100;
+      background: rgba(15,15,15,0.85);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 10px 24px;
+    }
+    #slide-counter {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--muted);
+      letter-spacing: 0.08em;
+      min-width: 52px;
+      text-align: center;
+    }
+    .nav-btn {
+      width: 32px; height: 32px;
+      background: none; border: 1px solid var(--line);
+      border-radius: 50%;
+      color: var(--muted);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+      transition: border-color 0.2s, color 0.2s, background 0.2s;
+      font-size: 14px;
+    }
+    .nav-btn:hover {
+      border-color: var(--amber);
+      color: var(--amber);
+      background: rgba(232,151,10,0.08);
+    }
+    .nav-btn:disabled { opacity: 0.25; cursor: not-allowed; }
+
+    /* ─── DOTS ───────────────────────────────────────── */
+    #dots {
+      position: fixed; right: 32px; top: 50%;
+      transform: translateY(-50%);
+      display: flex; flex-direction: column; gap: 8px;
+      z-index: 100;
+    }
+    .dot {
+      width: 4px; height: 4px;
+      border-radius: 50%;
+      background: var(--line);
+      border: 1px solid var(--muted);
+      transition: background 0.3s, transform 0.3s, height 0.3s;
+      cursor: pointer;
+    }
+    .dot.active {
+      background: var(--amber);
+      border-color: var(--amber);
+      height: 16px;
+      border-radius: 2px;
+      box-shadow: 0 0 8px var(--amber);
+    }
+
+    /* ─── DECK ───────────────────────────────────────── */
+    #deck {
+      width: 100vw; height: 100vh;
+      position: relative;
+    }
+
+    .slide {
+      position: absolute; inset: 0;
+      display: flex; align-items: center; justify-content: center;
+      padding: 60px 80px;
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(24px);
+      transition: opacity 0.55s cubic-bezier(0.4,0,0.2,1),
+                  transform 0.55s cubic-bezier(0.4,0,0.2,1);
+    }
+    .slide.active {
+      opacity: 1;
+      pointer-events: all;
+      transform: translateY(0);
+    }
+
+    /* ─── GRID BACKGROUNDS ──────────────────────────── */
+    .bg-grid::before {
+      content: '';
+      position: absolute; inset: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+      background-size: 48px 48px;
+      pointer-events: none;
+    }
+    .bg-noise::after {
+      content: '';
+      position: absolute; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+      background-size: 200px 200px;
+      pointer-events: none;
+      opacity: 0.4;
+    }
+
+    /* ─── SLIDE NUMBER ──────────────────────────────── */
+    .slide-num {
+      position: absolute; top: 40px; left: 80px;
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--muted);
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+    }
+    .slide-tag {
+      position: absolute; top: 40px; right: 80px;
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--amber);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    /* ─── TYPOGRAPHY ────────────────────────────────── */
+    .t-display {
+      font-family: var(--serif);
+      font-weight: 900;
+      line-height: 1.0;
+      letter-spacing: -0.02em;
+    }
+    .t-title {
+      font-family: var(--serif);
+      font-weight: 700;
+      line-height: 1.1;
+      letter-spacing: -0.01em;
+    }
+    .t-label {
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--amber);
+    }
+    .t-body {
+      font-family: var(--sans);
+      font-weight: 400;
+      line-height: 1.65;
+      color: rgba(240,237,230,0.7);
+    }
+    .t-code {
+      font-family: var(--mono);
+      font-size: 12px;
+      color: var(--teal);
+    }
+
+    /* ─── DECORATORS ────────────────────────────────── */
+    .amber-line {
+      width: 40px; height: 2px;
+      background: var(--amber);
+      box-shadow: 0 0 8px var(--amber);
+    }
+
+    .chip {
+      display: inline-flex; align-items: center;
+      padding: 4px 12px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .chip.amber { border-color: rgba(232,151,10,0.4); color: var(--amber); background: rgba(232,151,10,0.06); }
+    .chip.teal  { border-color: rgba(0,201,160,0.4);  color: var(--teal);  background: rgba(0,201,160,0.06); }
+    .chip.red   { border-color: rgba(232,80,58,0.4);  color: var(--red);   background: rgba(232,80,58,0.06); }
+
+    /* ─── CARD ──────────────────────────────────────── */
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 28px;
+      position: relative;
+      overflow: hidden;
+    }
+    .card::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(232,151,10,0.4), transparent);
+    }
+
+    /* ─── STAGGER ANIMATIONS ────────────────────────── */
+    .reveal { opacity: 0; transform: translateY(16px); }
+    .slide.active .reveal { animation: revealUp 0.5s forwards; }
+    .delay-1 { animation-delay: 0.1s !important; }
+    .delay-2 { animation-delay: 0.2s !important; }
+    .delay-3 { animation-delay: 0.3s !important; }
+    .delay-4 { animation-delay: 0.4s !important; }
+    .delay-5 { animation-delay: 0.5s !important; }
+    .delay-6 { animation-delay: 0.6s !important; }
+    .delay-7 { animation-delay: 0.7s !important; }
+    @keyframes revealUp {
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ─── ════════════════════════════════════════════ ─── */
+    /* ─── SLIDE 1 — COVER ──────────────────────────── ─── */
+    /* ─── ════════════════════════════════════════════ ─── */
+
+    #s1 { flex-direction: column; align-items: flex-start; justify-content: center; }
+
+    .cover-eyebrow {
+      display: flex; align-items: center; gap: 14px;
+      margin-bottom: 32px;
+    }
+    .cover-wordmark {
+      font-family: var(--mono);
+      font-size: 12px;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .cover-headline {
+      font-size: clamp(72px, 9vw, 128px);
+      margin-bottom: 8px;
+    }
+    .cover-headline .italic { font-style: italic; color: var(--amber); }
+
+    .cover-sub {
+      font-size: clamp(18px, 2vw, 26px);
+      color: rgba(240,237,230,0.55);
+      font-weight: 300;
+      letter-spacing: -0.01em;
+      margin-bottom: 48px;
+    }
+
+    .cover-meta {
+      display: flex; align-items: center; gap: 32px;
+      margin-top: auto;
+    }
+    .cover-meta-item {
+      display: flex; flex-direction: column; gap: 4px;
+    }
+    .cover-meta-label {
+      font-family: var(--mono);
+      font-size: 9px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .cover-meta-value {
+      font-family: var(--sans);
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    .cover-glow {
+      position: absolute;
+      right: -100px; top: 50%;
+      transform: translateY(-50%);
+      width: 600px; height: 600px;
+      background: radial-gradient(circle, rgba(232,151,10,0.12) 0%, transparent 65%);
+      pointer-events: none;
+    }
+    .cover-glow-2 {
+      position: absolute;
+      right: 200px; bottom: -100px;
+      width: 400px; height: 400px;
+      background: radial-gradient(circle, rgba(0,201,160,0.06) 0%, transparent 65%);
+      pointer-events: none;
+    }
+
+    .cover-tagline-block {
+      border-left: 2px solid var(--amber);
+      padding-left: 20px;
+      margin-bottom: 48px;
+    }
+    .cover-tagline {
+      font-size: clamp(16px, 1.6vw, 22px);
+      color: rgba(240,237,230,0.85);
+      font-weight: 400;
+      line-height: 1.5;
+    }
+
+    /* ─── ════════════════════════════════════════════ ─── */
+    /* ─── SLIDE 2 — PROBLEM ────────────────────────── ─── */
+    /* ─── ════════════════════════════════════════════ ─── */
+
+    #s2 { align-items: flex-start; gap: 80px; }
+    .problem-left { flex: 0 0 38%; display: flex; flex-direction: column; }
+    .problem-right { flex: 1; display: flex; flex-direction: column; gap: 16px; }
+
+    .stat-block {
+      display: flex; flex-direction: column; gap: 6px;
+      padding: 24px 0;
+      border-top: 1px solid var(--line);
+    }
+    .stat-block:first-child { border-top: none; padding-top: 0; }
+    .stat-number {
+      font-family: var(--serif);
+      font-size: clamp(42px, 5vw, 64px);
+      font-weight: 900;
+      line-height: 1;
+      color: var(--amber);
+    }
+    .stat-label {
+      font-size: 14px;
+      color: var(--muted);
+      font-weight: 400;
+    }
+
+    .pain-card {
+      display: flex; align-items: flex-start; gap: 16px;
+      background: var(--bg-card);
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      padding: 18px 20px;
+      transition: border-color 0.2s;
+    }
+    .pain-card:hover { border-color: rgba(232,80,58,0.3); }
+    .pain-icon {
+      width: 32px; height: 32px; border-radius: 4px;
+      background: rgba(232,80,58,0.1);
+      border: 1px solid rgba(232,80,58,0.2);
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      font-size: 14px;
+    }
+    .pain-title { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+    .pain-desc { font-size: 13px; color: var(--muted); line-height: 1.5; }
+
+    /* ─── ════════════════════════════════════════════ ─── */
+    /* ─── SLIDE 3 — SOLUTION ───────────────────────── ─── */
+    /* ─── ════════════════════════════════════════════ ─── */
+
+    #s3 { flex-direction: column; align-items: center; text-align: center; }
+
+    .solution-headline {
+      font-size: clamp(40px, 5vw, 64px);
+      line-height: 1.05;
+      max-width: 760px;
+    }
+    .solution-demo {
+      width: 100%; max-width: 800px;
+      background: var(--bg-card);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      overflow: hidden;
+      margin-top: 36px;
+    }
+    .demo-header {
+      display: flex; align-items: center; gap: 8px;
+      padding: 12px 18px;
+      border-bottom: 1px solid var(--line);
+      background: var(--bg-lift);
+    }
+    .demo-dot { width: 10px; height: 10px; border-radius: 50%; }
+    .demo-title { font-family: var(--mono); font-size: 11px; color: var(--muted); margin-left: 8px; }
+    .demo-body {
+      display: grid; grid-template-columns: 1fr 1px 1fr;
+      height: 200px;
+    }
+    .demo-chat {
+      padding: 18px;
+      display: flex; flex-direction: column; gap: 10px;
+      font-size: 13px;
+    }
+    .demo-divider { background: var(--line); }
+    .demo-preview {
+      padding: 18px;
+      display: flex; align-items: center; justify-content: center;
+      position: relative;
+    }
+    .chat-msg {
+      padding: 9px 13px;
+      border-radius: 6px;
+      font-size: 12px;
+      line-height: 1.45;
+      text-align: left;
+    }
+    .chat-msg.user { background: rgba(232,151,10,0.1); border: 1px solid rgba(232,151,10,0.2); color: var(--text); }
+    .chat-msg.ai   { background: var(--bg-lift); border: 1px solid var(--line); color: var(--muted); }
+    .preview-ui {
+      width: 100%;
+      background: #0a0a14;
+      border: 1px solid #1a1a2e;
+      border-radius: 6px;
+      height: 140px;
+      overflow: hidden;
+      display: flex; flex-direction: column;
+    }
+    .preview-bar {
+      height: 26px;
+      background: #111124;
+      border-bottom: 1px solid #1a1a2e;
+      display: flex; align-items: center; gap: 6px;
+      padding: 0 10px;
+    }
+    .preview-bar-dot { width: 6px; height: 6px; border-radius: 50%; background: #2a2a3e; }
+    .preview-hero-mock {
+      flex: 1; padding: 14px;
+      display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px;
+    }
+    .ph-title { width: 120px; height: 12px; background: linear-gradient(90deg, #e8970a33, #e8970a55); border-radius: 3px; }
+    .ph-sub { width: 80px; height: 7px; background: #1e1e2e; border-radius: 2px; }
+    .ph-btn { width: 64px; height: 22px; background: #e8970a; border-radius: 4px; margin-top: 4px; }
+
+    /* ─── ════════════════════════════════════════════ ─── */
+    /* ─── SLIDE 4 — HOW IT WORKS ───────────────────── ─── */
+    /* ─── ════════════════════════════════════════════ ─── */
+
+    #s4 { flex-direction: column; align-items: center; }
+
+    .how-steps {
+      display: grid; grid-template-columns: 1fr auto 1fr auto 1fr;
+      align-items: start;
+      gap: 0; width: 100%; max-width: 900px;
+      margin-top: 44px;
+    }
+    .how-step {
+      display: flex; flex-direction: column; align-items: center; text-align: center;
+      gap: 16px;
+    }
+    .how-num {
+      width: 56px; height: 56px;
+      border-radius: 50%;
+      border: 1px solid var(--line);
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--mono);
+      font-size: 18px;
+      font-weight: 700;
+      position: relative;
+      background: var(--bg-card);
+    }
+    .how-num.active {
+      border-color: var(--amber);
+      color: var(--amber);
+      box-shadow: 0 0 0 6px rgba(232,151,10,0.08), 0 0 20px rgba(232,151,10,0.15);
+    }
+    .how-step-title { font-size: 16px; font-weight: 600; }
+    .how-step-desc  { font-size: 13px; color: var(--muted); line-height: 1.5; max-width: 200px; }
+    .how-icon-wrap {
+      width: 80px; height: 80px;
+      background: var(--bg-card);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 28px;
+    }
+    .how-arrow {
+      display: flex; align-items: center; justify-content: center;
+      padding: 0 8px; padding-top: 28px; color: var(--amber); font-size: 20px; opacity: 0.6;
+    }
+
+    .step-code {
+      font-family: var(--mono);
+      font-size: 11px;
+      padding: 10px 14px;
+      background: var(--bg-lift);
+      border: 1px solid var(--line);
+      border-radius: 5px;
+      color: var(--teal);
+      text-align: left;
+      width: 100%;
+      max-width: 200px;
+    }
+
+    /* ─── ════════════════════════════════════════════ ─── */
+    /* ─── SLIDE 5 — FEATURES ───────────────────────── ─── */
+    /* ─── ════════════════════════════════════════════ ─── */
+
+    #s5 { flex-direction: column; align-items: flex-start; }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      width: 100%; max-width: 900px;
+      margin-top: 36px;
+    }
+    .feature-card {
+      background: var(--bg-card);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 28px;
+      position: relative;
+      overflow: hidden;
+      transition: border-color 0.25s;
+    }
+    .feature-card:hover { border-color: rgba(232,151,10,0.3); }
+    .feature-card::after {
+      content: attr(data-n);
+      position: absolute; bottom: 16px; right: 20px;
+      font-family: var(--mono);
+      font-size: 48px;
+      font-weight: 700;
+      color: rgba(255,255,255,0.03);
+      line-height: 1;
+    }
+    .feat-icon {
+      font-size: 22px; margin-bottom: 14px;
+      width: 44px; height: 44px;
+      background: rgba(232,151,10,0.08);
+      border: 1px solid rgba(232,151,10,0.18);
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .feat-title { font-size: 16px; font-weight: 600; margin-bottom: 8px; }
+    .feat-desc  { font-size: 13px; color: var(--muted); line-height: 1.55; }
+    .feat-tag {
+      display: inline-flex; margin-top: 12px;
+      padding: 3px 10px;
+      background: rgba(0,201,160,0.07);
+      border: 1px solid rgba(0,201,160,0.2);
+      border-radius: 4px;
+      font-family: var(--mono);
+      font-size: 10px;
+      color: var(--teal);
+      letter-spacing: 0.06em;
+    }
+
+    /* ─── ════════════════════════════════════════════ ─── */
+    /* ─── SLIDE 6 — ARCHITECTURE ───────────────────── ─── */
+    /* ─── ════════════════════════════════════════════ ─── */
+
+    #s6 { align-items: flex-start; gap: 64px; }
+    .arch-left { flex: 0 0 38%; display: flex; flex-direction: column; gap: 20px; }
+    .arch-right { flex: 1; }
+
+    .arch-diagram {
+      width: 100%;
+      background: var(--bg-card);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 24px;
+      font-family: var(--mono);
+      font-size: 11px;
+      line-height: 1.8;
+      color: var(--muted);
+    }
+    .arch-layer {
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 14px;
+      border-radius: 5px;
+      margin: 4px 0;
+    }
+    .arch-layer.browser { background: rgba(232,151,10,0.07); border: 1px solid rgba(232,151,10,0.15); }
+    .arch-layer.api     { background: rgba(0,201,160,0.07); border: 1px solid rgba(0,201,160,0.15); }
+    .arch-layer.queue   { background: rgba(100,120,255,0.07); border: 1px solid rgba(100,120,255,0.15); }
+    .arch-layer.data    { background: rgba(255,255,255,0.03); border: 1px solid var(--line); }
+    .arch-layer-name { color: var(--text); font-weight: 700; font-size: 12px; }
+    .arch-layer-tech { color: var(--muted); font-size: 10px; flex: 1; }
+    .arch-arrow-v {
+      text-align: center; color: var(--muted); font-size: 12px; padding: 2px 0;
+    }
+
+    .tech-chip {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 6px 12px;
+      background: var(--bg-lift);
+      border: 1px solid var(--line);
+      border-radius: 5px;
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--muted);
+      margin: 4px;
+    }
+    .tech-chip-dot {
+      width: 6px; height: 6px; border-radius: 50%;
+    }
+
+    /* ─── ════════════════════════════════════════════ ─── */
+    /* ─── SLIDE 7 — MARKET ─────────────────────────── ─── */
+    /* ─── ════════════════════════════════════════════ ─── */
+
+    #s7 { flex-direction: column; align-items: flex-start; }
+
+    .market-grid {
+      display: grid; grid-template-columns: 1fr 1fr 1fr;
+      gap: 16px; width: 100%; max-width: 900px;
+      margin-top: 40px;
+    }
+    .market-card {
+      background: var(--bg-card);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 28px 24px;
+      display: flex; flex-direction: column; gap: 10px;
+      position: relative;
+      overflow: hidden;
+    }
+    .market-card.featured {
+      border-color: rgba(232,151,10,0.35);
+      background: linear-gradient(135deg, rgba(232,151,10,0.06), transparent);
+    }
+    .market-card.featured::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--amber), transparent);
+    }
+    .market-type { font-family: var(--mono); font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }
+    .market-val {
+      font-family: var(--serif);
+      font-size: clamp(32px, 4vw, 48px);
+      font-weight: 900;
+      line-height: 1;
+    }
+    .market-val.amber { color: var(--amber); }
+    .market-name { font-size: 14px; font-weight: 600; }
+    .market-growth { font-size: 12px; color: var(--teal); font-family: var(--mono); }
+
+    .market-note {
+      margin-top: 24px;
+      padding: 16px 20px;
+      background: var(--bg-card);
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      font-size: 13px;
+      color: var(--muted);
+      max-width: 900px;
+    }
+    .market-note strong { color: var(--text); }
+
+    /* ─── ════════════════════════════════════════════ ─── */
+    /* ─── SLIDE 8 — BUSINESS MODEL ─────────────────── ─── */
+    /* ─── ════════════════════════════════════════════ ─── */
+
+    #s8 { align-items: flex-start; gap: 64px; }
+    .biz-left { flex: 0 0 36%; display: flex; flex-direction: column; gap: 20px; }
+    .biz-right { flex: 1; display: flex; flex-direction: column; gap: 14px; }
+
+    .biz-moat {
+      background: var(--bg-card);
+      border: 1px solid rgba(0,201,160,0.2);
+      border-radius: 8px;
+      padding: 20px;
+    }
+    .moat-label { font-family: var(--mono); font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--teal); margin-bottom: 10px; }
+    .moat-title { font-size: 16px; font-weight: 600; margin-bottom: 8px; }
+    .moat-desc { font-size: 13px; color: var(--muted); line-height: 1.55; }
+
+    .pricing-card {
+      display: flex; align-items: center; gap: 16px;
+      padding: 18px 22px;
+      background: var(--bg-card);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      transition: border-color 0.2s;
+    }
+    .pricing-card:hover { border-color: rgba(232,151,10,0.3); }
+    .pricing-card.featured { border-color: rgba(232,151,10,0.4); background: linear-gradient(90deg, rgba(232,151,10,0.04), transparent); }
+    .pricing-tier { font-weight: 600; font-size: 14px; min-width: 80px; }
+    .pricing-price { font-family: var(--mono); font-size: 18px; font-weight: 700; color: var(--amber); min-width: 100px; }
+    .pricing-price span { font-size: 11px; color: var(--muted); font-weight: 400; }
+    .pricing-desc { font-size: 12px; color: var(--muted); flex: 1; }
+    .pricing-badge {
+      padding: 3px 10px;
+      background: rgba(232,151,10,0.12);
+      border: 1px solid rgba(232,151,10,0.3);
+      border-radius: 4px;
+      font-family: var(--mono); font-size: 10px;
+      color: var(--amber);
+    }
+
+    /* ─── ════════════════════════════════════════════ ─── */
+    /* ─── SLIDE 9 — TRACTION ───────────────────────── ─── */
+    /* ─── ════════════════════════════════════════════ ─── */
+
+    #s9 { flex-direction: column; align-items: flex-start; }
+
+    .traction-cols {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 24px; width: 100%; max-width: 900px;
+      margin-top: 36px;
+    }
+    .traction-col-title {
+      font-family: var(--mono); font-size: 10px;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      margin-bottom: 16px;
+    }
+    .traction-col-title.built { color: var(--teal); }
+    .traction-col-title.next  { color: var(--amber); }
+
+    .traction-item {
+      display: flex; align-items: flex-start; gap: 12px;
+      padding: 14px 0;
+      border-top: 1px solid var(--line);
+    }
+    .traction-item:first-of-type { border-top: none; }
+    .traction-check {
+      width: 20px; height: 20px; flex-shrink: 0;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 10px;
+      margin-top: 2px;
+    }
+    .traction-check.done { background: rgba(0,201,160,0.12); border: 1px solid rgba(0,201,160,0.3); color: var(--teal); }
+    .traction-check.next { background: rgba(232,151,10,0.1); border: 1px solid rgba(232,151,10,0.25); color: var(--amber); }
+    .traction-text { font-size: 14px; font-weight: 500; }
+    .traction-sub  { font-size: 12px; color: var(--muted); margin-top: 2px; }
+
+    /* ─── ════════════════════════════════════════════ ─── */
+    /* ─── SLIDE 10 — ASK ───────────────────────────── ─── */
+    /* ─── ════════════════════════════════════════════ ─── */
+
+    #s10 { flex-direction: column; align-items: center; text-align: center; }
+
+    .ask-amount {
+      font-family: var(--serif);
+      font-size: clamp(64px, 9vw, 120px);
+      font-weight: 900;
+      line-height: 1;
+      color: var(--amber);
+      text-shadow: 0 0 60px rgba(232,151,10,0.25);
+    }
+    .ask-label {
+      font-family: var(--mono);
+      font-size: 12px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-top: 6px;
+    }
+    .ask-milestones {
+      display: flex; gap: 16px; margin-top: 40px;
+    }
+    .ask-milestone {
+      background: var(--bg-card);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 20px 22px;
+      display: flex; flex-direction: column; gap: 6px;
+      flex: 1;
+      text-align: left;
+    }
+    .ask-m-num {
+      font-family: var(--mono); font-size: 20px; font-weight: 700; color: var(--amber);
+    }
+    .ask-m-title { font-size: 14px; font-weight: 600; }
+    .ask-m-desc  { font-size: 12px; color: var(--muted); line-height: 1.5; }
+
+    .ask-contact {
+      margin-top: 36px;
+      display: flex; align-items: center; gap: 24px;
+      padding: 20px 32px;
+      background: var(--bg-card);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+    .ask-contact-item { display: flex; flex-direction: column; gap: 3px; align-items: center; }
+    .ask-contact-label { font-family: var(--mono); font-size: 9px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--muted); }
+    .ask-contact-value { font-size: 13px; font-weight: 500; }
+    .ask-contact-div { width: 1px; height: 32px; background: var(--line); }
+
+    .ask-glow {
+      position: absolute; top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 500px; height: 300px;
+      background: radial-gradient(ellipse, rgba(232,151,10,0.08) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    /* ─── SCROLLBAR HIDE ─────────────────────────────── */
+    ::-webkit-scrollbar { display: none; }
+  </style>
+</head>
+<body>
+
+  <div id="progress"></div>
+
+  <!-- Slide dots -->
+  <div id="dots"></div>
+
+  <!-- Deck -->
+  <div id="deck">
+
+    <!-- ─── SLIDE 1: COVER ─────────────────────────── -->
+    <section class="slide bg-grid bg-noise" id="s1">
+      <div class="cover-glow"></div>
+      <div class="cover-glow-2"></div>
+
+      <span class="slide-num reveal">01 / 10</span>
+      <span class="slide-tag reveal delay-1">Founder Introduction</span>
+
+      <div class="cover-eyebrow reveal delay-1">
+        <div class="amber-line"></div>
+        <span class="cover-wordmark">UIWiz</span>
+        <span class="chip amber">Pre-Seed 2025</span>
+      </div>
+
+      <h1 class="t-display cover-headline reveal delay-2">
+        Design to<br />
+        <span class="italic">production</span><br />
+        in seconds.
+      </h1>
+
+      <div class="cover-tagline-block reveal delay-3">
+        <p class="cover-tagline">
+          UIWiz turns plain English descriptions into fully working<br />
+          Next.js + Tailwind components — rendered live in the browser.
+        </p>
+      </div>
+
+      <div class="cover-meta reveal delay-4">
+        <div class="cover-meta-item">
+          <span class="cover-meta-label">Founder</span>
+          <span class="cover-meta-value">Mritunjay Pandey</span>
+        </div>
+        <div style="width:1px;height:36px;background:var(--line)"></div>
+        <div class="cover-meta-item">
+          <span class="cover-meta-label">Category</span>
+          <span class="cover-meta-value">AI-Powered Dev Tools</span>
+        </div>
+        <div style="width:1px;height:36px;background:var(--line)"></div>
+        <div class="cover-meta-item">
+          <span class="cover-meta-label">Stage</span>
+          <span class="cover-meta-value">Functional MVP</span>
+        </div>
+        <div style="width:1px;height:36px;background:var(--line)"></div>
+        <div class="cover-meta-item">
+          <span class="cover-meta-label">Contact</span>
+          <span class="cover-meta-value" style="font-size:12px;">mritunjaypandey0789@gmail.com</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─── SLIDE 2: PROBLEM ───────────────────────── -->
+    <section class="slide bg-grid" id="s2">
+      <span class="slide-num reveal">02 / 10</span>
+      <span class="slide-tag reveal delay-1">The Problem</span>
+
+      <div class="problem-left">
+        <div class="reveal delay-1">
+          <p class="t-label" style="margin-bottom:14px;">The Bottleneck</p>
+          <h2 class="t-title" style="font-size:clamp(32px,3.5vw,46px);margin-bottom:24px;">UI development is the slowest part of shipping.</h2>
+          <p class="t-body" style="font-size:14px;margin-bottom:32px;">Developers spend the majority of their time on boilerplate, not product logic. Every component starts from zero. Iteration requires full code-design-review cycles.</p>
+        </div>
+
+        <div class="reveal delay-2">
+          <div class="stat-block">
+            <span class="stat-number">68%</span>
+            <span class="stat-label">of dev time spent on UI-related work</span>
+          </div>
+          <div class="stat-block">
+            <span class="stat-number">4–6h</span>
+            <span class="stat-label">average per new frontend feature</span>
+          </div>
+          <div class="stat-block">
+            <span class="stat-number">$47B</span>
+            <span class="stat-label">global frontend engineering spend annually</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="problem-right">
+        <div class="reveal delay-2">
+          <div class="pain-card">
+            <div class="pain-icon">⏳</div>
+            <div>
+              <div class="pain-title">Boilerplate is a time sink</div>
+              <div class="pain-desc">Responsive layouts, component scaffolding, and Tailwind utility wiring are tedious and repetitive — even for senior devs.</div>
+            </div>
+          </div>
+        </div>
+        <div class="reveal delay-3">
+          <div class="pain-card">
+            <div class="pain-icon">🔁</div>
+            <div>
+              <div class="pain-title">The iteration loop is broken</div>
+              <div class="pain-desc">Design changes require dev work. Dev changes need designer approval. The feedback loop kills momentum.</div>
+            </div>
+          </div>
+        </div>
+        <div class="reveal delay-4">
+          <div class="pain-card">
+            <div class="pain-icon">🧠</div>
+            <div>
+              <div class="pain-title">Context switching is expensive</div>
+              <div class="pain-desc">Switching between Figma, code, and browser preview costs hours. There's no single place to describe, generate, and iterate.</div>
+            </div>
+          </div>
+        </div>
+        <div class="reveal delay-5">
+          <div class="pain-card">
+            <div class="pain-icon">🚫</div>
+            <div>
+              <div class="pain-title">No ownership in existing tools</div>
+              <div class="pain-desc">Figma-to-code tools produce uncustomizable markup. AI chatbots give raw code snippets with no live preview or project context.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─── SLIDE 3: SOLUTION ──────────────────────── -->
+    <section class="slide bg-grid" id="s3">
+      <span class="slide-num reveal">03 / 10</span>
+      <span class="slide-tag reveal delay-1">The Solution</span>
+
+      <div class="reveal delay-1">
+        <p class="t-label" style="margin-bottom:16px;">Introducing UIWiz</p>
+      </div>
+
+      <h2 class="t-title solution-headline reveal delay-2">
+        Describe your UI in plain English.<br />
+        <span style="color:var(--amber);font-style:italic;">See it live. Iterate instantly.</span>
+      </h2>
+
+      <p class="t-body reveal delay-3" style="font-size:15px;max-width:620px;margin-top:16px;">
+        UIWiz is a chat-based UI generation platform. Every prompt generates real, production-quality Next.js + TypeScript + Tailwind code — previewed live in the browser and versioned automatically.
+      </p>
+
+      <div class="solution-demo reveal delay-4">
+        <div class="demo-header">
+          <div class="demo-dot" style="background:#ff5f57"></div>
+          <div class="demo-dot" style="background:#febc2e"></div>
+          <div class="demo-dot" style="background:#28c840"></div>
+          <span class="demo-title">UIWiz — my-saas-project</span>
+        </div>
+        <div class="demo-body">
+          <div class="demo-chat">
+            <div class="chat-msg user">Build me a pricing page with monthly/yearly toggle and 3 tiers</div>
+            <div class="chat-msg ai">✓ Generated pricing page — 2 files. Toggle works, highlight on Pro tier. Version 3 saved.</div>
+            <div class="chat-msg user" style="opacity:0.5">Make the Pro card pop more with a gradient border...</div>
+          </div>
+          <div class="demo-divider"></div>
+          <div class="demo-preview">
+            <div class="preview-ui">
+              <div class="preview-bar">
+                <div class="preview-bar-dot"></div>
+                <div class="preview-bar-dot"></div>
+                <div style="flex:1"></div>
+                <div style="font-family:var(--mono);font-size:9px;color:#3a3a5e">localhost:3000</div>
+              </div>
+              <div class="preview-hero-mock">
+                <div class="ph-title"></div>
+                <div class="ph-sub"></div>
+                <div style="display:flex;gap:8px;margin:6px 0">
+                  <div style="width:50px;height:18px;background:#111124;border-radius:9px;border:1px solid #1a1a2e"></div>
+                  <div style="width:50px;height:18px;background:#e8970a;border-radius:9px"></div>
+                </div>
+                <div style="display:flex;gap:8px">
+                  <div style="width:50px;height:50px;background:#111124;border-radius:5px;border:1px solid #1a1a2e"></div>
+                  <div style="width:50px;height:50px;background:#111124;border-radius:5px;border:1px solid #e8970a;box-shadow:0 0 8px rgba(232,151,10,0.3)"></div>
+                  <div style="width:50px;height:50px;background:#111124;border-radius:5px;border:1px solid #1a1a2e"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─── SLIDE 4: HOW IT WORKS ──────────────────── -->
+    <section class="slide bg-grid" id="s4">
+      <span class="slide-num reveal">04 / 10</span>
+      <span class="slide-tag reveal delay-1">How It Works</span>
+
+      <div class="reveal delay-1" style="text-align:center;">
+        <p class="t-label" style="margin-bottom:14px;">Generation Flow</p>
+        <h2 class="t-title" style="font-size:clamp(28px,3vw,40px);">Three steps from idea to live code.</h2>
+      </div>
+
+      <div class="how-steps reveal delay-2">
+        <div class="how-step">
+          <div class="how-num active">01</div>
+          <div class="how-icon-wrap">💬</div>
+          <div class="how-step-title">Describe</div>
+          <div class="how-step-desc">Type your UI in plain English. The more detail, the better the output.</div>
+          <div class="step-code">"Build a hero section with a gradient background and CTA button"</div>
+        </div>
+        <div class="how-arrow reveal delay-3">→</div>
+        <div class="how-step reveal delay-3">
+          <div class="how-num active">02</div>
+          <div class="how-icon-wrap">⚡</div>
+          <div class="how-step-title">Generate</div>
+          <div class="how-step-desc">Gemini AI produces complete Next.js + Tailwind code. Sandpack renders it live — instantly.</div>
+          <div class="step-code" style="color:var(--amber)">→ /app/page.tsx<br/>→ /components/Hero.tsx</div>
+        </div>
+        <div class="how-arrow reveal delay-4">→</div>
+        <div class="how-step reveal delay-4">
+          <div class="how-num active">03</div>
+          <div class="how-icon-wrap">🔄</div>
+          <div class="how-step-title">Iterate</div>
+          <div class="how-step-desc">Refine with follow-up prompts. Every generation is versioned. Restore any prior version.</div>
+          <div class="step-code" style="color:var(--teal)">v1 → v2 → v3<br/>↺ restore any version</div>
+        </div>
+      </div>
+
+      <div class="reveal delay-5" style="display:flex;gap:12px;margin-top:8px;flex-wrap:wrap;justify-content:center;">
+        <span class="chip teal">Real-time WebSocket stream</span>
+        <span class="chip amber">Celery async generation</span>
+        <span class="chip">Firebase Auth</span>
+        <span class="chip">Immutable version snapshots</span>
+      </div>
+    </section>
+
+    <!-- ─── SLIDE 5: FEATURES ──────────────────────── -->
+    <section class="slide bg-grid" id="s5">
+      <span class="slide-num reveal">05 / 10</span>
+      <span class="slide-tag reveal delay-1">Key Features</span>
+
+      <div class="reveal delay-1">
+        <p class="t-label" style="margin-bottom:12px;">What UIWiz Ships With</p>
+        <h2 class="t-title" style="font-size:clamp(28px,3vw,40px);">Built for real production use.</h2>
+      </div>
+
+      <div class="features-grid">
+        <div class="feature-card reveal delay-2" data-n="01">
+          <div class="feat-icon">⚡</div>
+          <div class="feat-title">Live In-Browser Preview</div>
+          <div class="feat-desc">Powered by Sandpack (CodeSandbox). Generated Next.js code runs instantly in the browser — no server, no wait. Full hot reload on every iteration.</div>
+          <span class="feat-tag">Sandpack · iframe sandbox</span>
+        </div>
+        <div class="feature-card reveal delay-3" data-n="02">
+          <div class="feat-icon">🕰️</div>
+          <div class="feat-title">Immutable Version History</div>
+          <div class="feat-desc">Every prompt creates a new version snapshot. Browse the entire generation history side-by-side. Restore any prior version with a single click — non-destructively.</div>
+          <span class="feat-tag">Git-like for UI</span>
+        </div>
+        <div class="feature-card reveal delay-4" data-n="03">
+          <div class="feat-icon">🔑</div>
+          <div class="feat-title">Bring Your Own API Key</div>
+          <div class="feat-desc">Users connect their own Google Gemini key. Zero inference cost to the platform. Keys are encrypted at rest with AES-256 (Fernet) and never returned to the frontend.</div>
+          <span class="feat-tag">BYOK · ~85% gross margin</span>
+        </div>
+        <div class="feature-card reveal delay-5" data-n="04">
+          <div class="feat-icon">💬</div>
+          <div class="feat-title">Context-Aware Chat Iteration</div>
+          <div class="feat-desc">Full chat history and current file tree are sent with every prompt. Gemini makes precise incremental edits — not full rewrites. Natural language refinement that actually works.</div>
+          <span class="feat-tag">Stateful · Gemini Pro</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─── SLIDE 6: ARCHITECTURE ──────────────────── -->
+    <section class="slide bg-grid" id="s6">
+      <span class="slide-num reveal">06 / 10</span>
+      <span class="slide-tag reveal delay-1">Technology</span>
+
+      <div class="arch-left">
+        <div class="reveal delay-1">
+          <p class="t-label" style="margin-bottom:12px;">Production-Grade Stack</p>
+          <h2 class="t-title" style="font-size:clamp(24px,2.5vw,34px);margin-bottom:14px;">Built on battle-tested infrastructure.</h2>
+          <p class="t-body" style="font-size:13px;">Not a weekend prototype. UIWiz uses an async event-driven architecture designed for scale — real-time WebSocket relay, background Celery workers, and encrypted credential storage.</p>
+        </div>
+
+        <div class="reveal delay-3" style="display:flex;flex-wrap:wrap;margin-top:16px;gap:0">
+          <span class="tech-chip"><span class="tech-chip-dot" style="background:#e8970a"></span>Next.js 14</span>
+          <span class="tech-chip"><span class="tech-chip-dot" style="background:#00c9a0"></span>FastAPI</span>
+          <span class="tech-chip"><span class="tech-chip-dot" style="background:#6464ff"></span>Celery 5</span>
+          <span class="tech-chip"><span class="tech-chip-dot" style="background:#ff4444"></span>Redis 7</span>
+          <span class="tech-chip"><span class="tech-chip-dot" style="background:#5566ff"></span>PostgreSQL 16</span>
+          <span class="tech-chip"><span class="tech-chip-dot" style="background:#ffcc00"></span>Firebase Auth</span>
+          <span class="tech-chip"><span class="tech-chip-dot" style="background:#e8970a"></span>Sandpack</span>
+          <span class="tech-chip"><span class="tech-chip-dot" style="background:#00c9a0"></span>Gemini API</span>
+          <span class="tech-chip"><span class="tech-chip-dot" style="background:#888"></span>Docker</span>
+          <span class="tech-chip"><span class="tech-chip-dot" style="background:#888"></span>Zustand</span>
+        </div>
+      </div>
+
+      <div class="arch-right reveal delay-2">
+        <div class="arch-diagram">
+          <div class="arch-layer browser">
+            <span class="tech-chip-dot" style="background:var(--amber);width:8px;height:8px;border-radius:50%;flex-shrink:0"></span>
+            <span class="arch-layer-name">Browser</span>
+            <span class="arch-layer-tech">Next.js 14 · Zustand · Sandpack · Firebase Auth SDK</span>
+          </div>
+          <div class="arch-arrow-v">↕ HTTP (axios + ID token) · WebSocket (/ws/{id}?token=…)</div>
+          <div class="arch-layer api">
+            <span class="tech-chip-dot" style="background:var(--teal);width:8px;height:8px;border-radius:50%;flex-shrink:0"></span>
+            <span class="arch-layer-name">FastAPI :8000</span>
+            <span class="arch-layer-tech">auth · projects · generate · versions · ws relay</span>
+          </div>
+          <div class="arch-arrow-v">↓ enqueue task &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;↕ asyncpg</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:4px 0">
+            <div class="arch-layer queue" style="flex-direction:column;align-items:flex-start;gap:2px">
+              <div style="display:flex;align-items:center;gap:8px">
+                <span class="tech-chip-dot" style="background:#6464ff;width:8px;height:8px;border-radius:50%"></span>
+                <span class="arch-layer-name">Redis :6379</span>
+              </div>
+              <span style="font-size:10px;color:var(--muted);padding-left:16px">broker · backend · pub/sub</span>
+            </div>
+            <div class="arch-layer data" style="flex-direction:column;align-items:flex-start;gap:2px">
+              <div style="display:flex;align-items:center;gap:8px">
+                <span class="tech-chip-dot" style="background:#5566ff;width:8px;height:8px;border-radius:50%"></span>
+                <span class="arch-layer-name">PostgreSQL :5432</span>
+              </div>
+              <span style="font-size:10px;color:var(--muted);padding-left:16px">users · projects · versions · files</span>
+            </div>
+          </div>
+          <div class="arch-arrow-v">↕ subscribe / publish</div>
+          <div class="arch-layer queue">
+            <span class="tech-chip-dot" style="background:#6464ff;width:8px;height:8px;border-radius:50%;flex-shrink:0"></span>
+            <span class="arch-layer-name">Celery Worker</span>
+            <span class="arch-layer-tech">calls Gemini · saves DB · publishes WS events</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─── SLIDE 7: MARKET ────────────────────────── -->
+    <section class="slide bg-grid" id="s7">
+      <span class="slide-num reveal">07 / 10</span>
+      <span class="slide-tag reveal delay-1">Market Opportunity</span>
+
+      <div class="reveal delay-1">
+        <p class="t-label" style="margin-bottom:12px;">Total Addressable Market</p>
+        <h2 class="t-title" style="font-size:clamp(28px,3vw,42px);">Targeting the $47B frontend engineering market.</h2>
+      </div>
+
+      <div class="market-grid">
+        <div class="market-card reveal delay-2">
+          <span class="market-type">TAM — Total Market</span>
+          <span class="market-val">$47B</span>
+          <span class="market-name">Global Frontend Development</span>
+          <span class="market-growth">↑ 22% YoY</span>
+        </div>
+        <div class="market-card featured reveal delay-3">
+          <span class="market-type">SAM — Serviceable</span>
+          <span class="market-val amber">$8.2B</span>
+          <span class="market-name">AI-Assisted Developer Tooling</span>
+          <span class="market-growth">↑ 35% YoY</span>
+        </div>
+        <div class="market-card reveal delay-4">
+          <span class="market-type">SOM — Obtainable</span>
+          <span class="market-val">$420M</span>
+          <span class="market-name">Low-Code UI Generation Tools</span>
+          <span class="market-growth">↑ 41% YoY</span>
+        </div>
+      </div>
+
+      <div class="market-note reveal delay-5">
+        <strong>Why now?</strong> GitHub Copilot proved developers will pay for AI assistance ($100M ARR in year 2). Vercel's v0 shows the demand for AI UI generation is massive — but v0 locks users into proprietary output with no version history. <strong>UIWiz gives developers full code ownership + iteration history.</strong>
+      </div>
+
+      <div class="reveal delay-6" style="display:flex;gap:12px;margin-top:16px;flex-wrap:wrap;">
+        <span class="chip teal">35% YoY developer tools growth</span>
+        <span class="chip amber">70M+ developers globally</span>
+        <span class="chip">Vercel v0 validated demand — no version control, no ownership</span>
+      </div>
+    </section>
+
+    <!-- ─── SLIDE 8: BUSINESS MODEL ────────────────── -->
+    <section class="slide bg-grid" id="s8">
+      <span class="slide-num reveal">08 / 10</span>
+      <span class="slide-tag reveal delay-1">Business Model</span>
+
+      <div class="biz-left">
+        <div class="reveal delay-1">
+          <p class="t-label" style="margin-bottom:12px;">How We Make Money</p>
+          <h2 class="t-title" style="font-size:clamp(24px,2.5vw,34px);">High-margin SaaS with zero inference costs.</h2>
+        </div>
+
+        <div class="biz-moat reveal delay-2">
+          <div class="moat-label">Core Advantage</div>
+          <div class="moat-title">Bring Your Own Key (BYOK)</div>
+          <div class="moat-desc">Users connect their own Gemini API key. UIWiz never pays for AI inference. This unlocks <strong style="color:var(--teal)">~85% gross margins</strong> from day one — unheard of in the AI tools space.</div>
+        </div>
+
+        <div class="reveal delay-3" style="padding:18px;background:var(--bg-card);border:1px solid var(--line);border-radius:8px;">
+          <div style="font-family:var(--mono);font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);margin-bottom:12px;">Unit Economics</div>
+          <div style="display:flex;flex-direction:column;gap:8px;font-size:13px;">
+            <div style="display:flex;justify-content:space-between;"><span style="color:var(--muted)">COGS (per user/mo)</span><span style="font-family:var(--mono);color:var(--teal)">~$0.50</span></div>
+            <div style="display:flex;justify-content:space-between;"><span style="color:var(--muted)">Gross Margin</span><span style="font-family:var(--mono);color:var(--amber)">~85%</span></div>
+            <div style="display:flex;justify-content:space-between;"><span style="color:var(--muted)">Target LTV:CAC</span><span style="font-family:var(--mono)">5:1</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="biz-right">
+        <div class="reveal delay-2" style="margin-bottom:8px;">
+          <p class="t-label">Pricing Tiers</p>
+        </div>
+
+        <div class="pricing-card reveal delay-3">
+          <div class="pricing-tier">Free</div>
+          <div class="pricing-price">$0<span>/mo</span></div>
+          <div class="pricing-desc">3 projects · 20 generations/mo · Community support</div>
+        </div>
+
+        <div class="pricing-card featured reveal delay-4">
+          <div class="pricing-tier">Pro</div>
+          <div class="pricing-price">$19<span>/mo</span></div>
+          <div class="pricing-desc">Unlimited projects · Unlimited generations · Export · Priority support</div>
+          <div class="pricing-badge">Most Popular</div>
+        </div>
+
+        <div class="pricing-card reveal delay-5">
+          <div class="pricing-tier">Team</div>
+          <div class="pricing-price">$49<span>/seat/mo</span></div>
+          <div class="pricing-desc">All Pro features · Shared projects · Team version history · SSO</div>
+        </div>
+
+        <div class="pricing-card reveal delay-6" style="border-style:dashed;">
+          <div class="pricing-tier">Enterprise</div>
+          <div class="pricing-price" style="font-size:14px;color:var(--muted)">Custom</div>
+          <div class="pricing-desc">Self-hosted · Custom AI models · Dedicated support · SLA</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─── SLIDE 9: TRACTION ──────────────────────── -->
+    <section class="slide bg-grid" id="s9">
+      <span class="slide-num reveal">09 / 10</span>
+      <span class="slide-tag reveal delay-1">Traction &amp; Roadmap</span>
+
+      <div class="reveal delay-1">
+        <p class="t-label" style="margin-bottom:12px;">Where We Are Today</p>
+        <h2 class="t-title" style="font-size:clamp(28px,3vw,40px);">Functional MVP shipped. Ready to grow.</h2>
+      </div>
+
+      <div class="traction-cols">
+        <div class="reveal delay-2">
+          <div class="traction-col-title built">✓ Already Built</div>
+
+          <div class="traction-item">
+            <div class="traction-check done">✓</div>
+            <div>
+              <div class="traction-text">Full AI generation pipeline</div>
+              <div class="traction-sub">Celery + Redis + Gemini · WebSocket real-time streaming</div>
+            </div>
+          </div>
+          <div class="traction-item">
+            <div class="traction-check done">✓</div>
+            <div>
+              <div class="traction-text">Live in-browser preview</div>
+              <div class="traction-sub">Sandpack renders Next.js code · File explorer tab + Code tab</div>
+            </div>
+          </div>
+          <div class="traction-item">
+            <div class="traction-check done">✓</div>
+            <div>
+              <div class="traction-text">Immutable version control</div>
+              <div class="traction-sub">Every generation saved · Restore any version non-destructively</div>
+            </div>
+          </div>
+          <div class="traction-item">
+            <div class="traction-check done">✓</div>
+            <div>
+              <div class="traction-text">Auth + encrypted key storage</div>
+              <div class="traction-sub">Firebase Auth · AES-256 Fernet encryption at rest</div>
+            </div>
+          </div>
+          <div class="traction-item">
+            <div class="traction-check done">✓</div>
+            <div>
+              <div class="traction-text">Full Docker deployment</div>
+              <div class="traction-sub">Single `docker compose up` · Production-ready config</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="reveal delay-3">
+          <div class="traction-col-title next">→ Coming Next (6 months)</div>
+
+          <div class="traction-item">
+            <div class="traction-check next">→</div>
+            <div>
+              <div class="traction-text">One-click Vercel deploy</div>
+              <div class="traction-sub">Push generated project directly to production</div>
+            </div>
+          </div>
+          <div class="traction-item">
+            <div class="traction-check next">→</div>
+            <div>
+              <div class="traction-text">GitHub sync</div>
+              <div class="traction-sub">Push any version to a GitHub repository automatically</div>
+            </div>
+          </div>
+          <div class="traction-item">
+            <div class="traction-check next">→</div>
+            <div>
+              <div class="traction-text">Team collaboration</div>
+              <div class="traction-sub">Shared projects · Real-time multiplayer editing</div>
+            </div>
+          </div>
+          <div class="traction-item">
+            <div class="traction-check next">→</div>
+            <div>
+              <div class="traction-text">Component library</div>
+              <div class="traction-sub">Reusable generated components across projects</div>
+            </div>
+          </div>
+          <div class="traction-item">
+            <div class="traction-check next">→</div>
+            <div>
+              <div class="traction-text">Public launch + waitlist</div>
+              <div class="traction-sub">Product Hunt launch · Developer community outreach</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─── SLIDE 10: ASK ──────────────────────────── -->
+    <section class="slide bg-grid bg-noise" id="s10">
+      <div class="ask-glow"></div>
+      <span class="slide-num reveal">10 / 10</span>
+      <span class="slide-tag reveal delay-1">The Ask</span>
+
+      <div class="reveal delay-1">
+        <p class="t-label" style="margin-bottom:12px;">Pre-Seed Round</p>
+      </div>
+
+      <div class="ask-amount reveal delay-2">$500K</div>
+      <div class="ask-label reveal delay-2">Pre-Seed Raise</div>
+
+      <div class="ask-milestones reveal delay-3">
+        <div class="ask-milestone">
+          <div class="ask-m-num">1,000</div>
+          <div class="ask-m-title">Paying Users</div>
+          <div class="ask-m-desc">Public launch + Product Hunt · Developer community outreach</div>
+        </div>
+        <div class="ask-milestone">
+          <div class="ask-m-num">+2</div>
+          <div class="ask-m-title">Engineering Hires</div>
+          <div class="ask-m-desc">Full-stack engineer + DevOps to ship roadmap and scale infra</div>
+        </div>
+        <div class="ask-milestone">
+          <div class="ask-m-num">6 mo</div>
+          <div class="ask-m-title">Runway</div>
+          <div class="ask-m-desc">Ship Vercel deploy, GitHub sync, and team collaboration features</div>
+        </div>
+      </div>
+
+      <div class="ask-contact reveal delay-4">
+        <div class="ask-contact-item">
+          <span class="ask-contact-label">Founder</span>
+          <span class="ask-contact-value">Mritunjay Pandey</span>
+        </div>
+        <div class="ask-contact-div"></div>
+        <div class="ask-contact-item">
+          <span class="ask-contact-label">Email</span>
+          <span class="ask-contact-value">mritunjaypandey0789@gmail.com</span>
+        </div>
+        <div class="ask-contact-div"></div>
+        <div class="ask-contact-item">
+          <span class="ask-contact-label">Product</span>
+          <span class="ask-contact-value">UIWiz — AI UI Generator</span>
+        </div>
+        <div class="ask-contact-div"></div>
+        <div class="ask-contact-item">
+          <span class="ask-contact-label">Stage</span>
+          <span class="ask-contact-value" style="color:var(--amber)">Functional MVP · Pre-Seed</span>
+        </div>
+      </div>
+
+      <div class="reveal delay-5" style="margin-top:20px;">
+        <p style="font-size:13px;color:var(--muted);font-style:italic;font-family:var(--serif);">"The best UI will be described, not drawn."</p>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- Navigation -->
+  <div id="nav">
+    <button class="nav-btn" id="prevBtn" onclick="navigate(-1)">←</button>
+    <span id="slide-counter">1 / 10</span>
+    <button class="nav-btn" id="nextBtn" onclick="navigate(1)">→</button>
+  </div>
+
+  <script>
+    const TOTAL = 10;
+    let current = 1;
+
+    function buildDots() {
+      const el = document.getElementById('dots');
+      for (let i = 1; i <= TOTAL; i++) {
+        const d = document.createElement('div');
+        d.className = 'dot' + (i === 1 ? ' active' : '');
+        d.onclick = () => goTo(i);
+        el.appendChild(d);
+      }
+    }
+
+    function goTo(n) {
+      if (n < 1 || n > TOTAL) return;
+      const prev = document.getElementById('s' + current);
+      prev.classList.remove('active');
+
+      current = n;
+      const next = document.getElementById('s' + current);
+      next.classList.add('active');
+
+      // Reset + re-trigger animations
+      next.querySelectorAll('.reveal').forEach(el => {
+        el.style.animation = 'none';
+        el.offsetHeight; // reflow
+        el.style.animation = '';
+      });
+
+      document.getElementById('slide-counter').textContent = current + ' / ' + TOTAL;
+      document.getElementById('progress').style.width = ((current / TOTAL) * 100) + '%';
+
+      document.querySelectorAll('.dot').forEach((d, i) => {
+        d.classList.toggle('active', i + 1 === current);
+      });
+
+      document.getElementById('prevBtn').disabled = current === 1;
+      document.getElementById('nextBtn').disabled = current === TOTAL;
+    }
+
+    function navigate(dir) { goTo(current + dir); }
+
+    document.addEventListener('keydown', e => {
+      if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ')  navigate(1);
+      if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   navigate(-1);
+    });
+
+    // Touch swipe
+    let touchX = 0;
+    document.addEventListener('touchstart', e => { touchX = e.touches[0].clientX; });
+    document.addEventListener('touchend', e => {
+      const dx = e.changedTouches[0].clientX - touchX;
+      if (Math.abs(dx) > 50) navigate(dx < 0 ? 1 : -1);
+    });
+
+    buildDots();
+    goTo(1);
+  </script>
+</body>
+</html>

@@ -1,7 +1,10 @@
+import logging
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from datetime import datetime
+
+logger = logging.getLogger(__name__)
 
 from app.db.database import get_db
 from app.models.models import User
@@ -23,6 +26,7 @@ async def verify_token(
     try:
         token_data = verify_firebase_token(body.id_token)
     except Exception as e:
+        logger.error("Firebase token verification failed: %s: %s", type(e).__name__, e)
         raise HTTPException(status_code=401, detail="Invalid Firebase token")
 
     # Look up existing user

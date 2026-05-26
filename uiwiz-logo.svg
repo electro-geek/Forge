@@ -1,0 +1,203 @@
+<svg width="560" height="180" viewBox="0 0 560 180" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+
+    <!-- Google Fonts -->
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Syne:wght@700;800&amp;family=JetBrains+Mono:wght@400;700&amp;display=swap');
+    </style>
+
+    <!-- Clip for rounded background -->
+    <clipPath id="bgClip">
+      <rect width="560" height="180" rx="20"/>
+    </clipPath>
+
+    <!-- Radial gradient: ambient glow center -->
+    <radialGradient id="ambientGlow" cx="22%" cy="50%" r="45%" gradientUnits="objectBoundingBox">
+      <stop offset="0%"   stop-color="#FF6B35" stop-opacity="0.14"/>
+      <stop offset="100%" stop-color="#FF6B35" stop-opacity="0"/>
+    </radialGradient>
+
+    <!-- Gradient for icon fill -->
+    <linearGradient id="iconGrad" x1="3.5" y1="3.5" x2="16" y2="17" gradientUnits="userSpaceOnUse">
+      <stop offset="0%"   stop-color="#FF8C5E"/>
+      <stop offset="100%" stop-color="#FF5A1F"/>
+    </linearGradient>
+
+    <!-- Icon glow filter -->
+    <filter id="iconGlow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="1.5" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <!-- Soft ambient glow behind icon box -->
+    <filter id="boxGlow" x="-60%" y="-60%" width="220%" height="220%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="22" result="blur"/>
+    </filter>
+
+    <!-- Text glow for "UI" -->
+    <filter id="textGlow" x="-10%" y="-20%" width="120%" height="140%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="3.5" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <!-- Subtle edge vignette -->
+    <radialGradient id="vignette" cx="50%" cy="50%" r="70%">
+      <stop offset="0%"   stop-color="transparent"/>
+      <stop offset="100%" stop-color="rgba(0,0,0,0.35)"/>
+    </radialGradient>
+
+  </defs>
+
+  <!-- ── Background ────────────────────────────────────────────── -->
+  <rect width="560" height="180" rx="20" fill="#080C14"/>
+
+  <!-- Dot grid pattern (matches site's OG image) -->
+  <g clip-path="url(#bgClip)">
+    <!-- Row 1 -->
+    <circle cx="40"  cy="30"  r="1" fill="rgba(255,107,53,0.06)"/>
+    <circle cx="80"  cy="30"  r="1" fill="rgba(255,107,53,0.06)"/>
+    <circle cx="120" cy="30"  r="1" fill="rgba(255,107,53,0.06)"/>
+    <circle cx="160" cy="30"  r="1" fill="rgba(255,107,53,0.06)"/>
+    <circle cx="200" cy="30"  r="1" fill="rgba(255,107,53,0.06)"/>
+    <circle cx="240" cy="30"  r="1" fill="rgba(255,107,53,0.06)"/>
+    <circle cx="280" cy="30"  r="1" fill="rgba(255,107,53,0.06)"/>
+    <circle cx="320" cy="30"  r="1" fill="rgba(255,107,53,0.06)"/>
+    <circle cx="360" cy="30"  r="1" fill="rgba(255,107,53,0.06)"/>
+    <circle cx="400" cy="30"  r="1" fill="rgba(255,107,53,0.06)"/>
+    <circle cx="440" cy="30"  r="1" fill="rgba(255,107,53,0.06)"/>
+    <circle cx="480" cy="30"  r="1" fill="rgba(255,107,53,0.06)"/>
+    <circle cx="520" cy="30"  r="1" fill="rgba(255,107,53,0.06)"/>
+    <!-- Row 2 -->
+    <circle cx="40"  cy="70"  r="1" fill="rgba(255,107,53,0.06)"/>
+    <circle cx="80"  cy="70"  r="1" fill="rgba(255,107,53,0.06)"/>
+    <circle cx="120" cy="70"  r="1" fill="rgba(255,107,53,0.06)"/>
+    <circle cx="160" cy="70"  r="1" fill="rgba(255,107,53,0.06)"/>
+    <circle cx="200" cy="70"  r="1" fill="rgba(255,107,53,0.06)"/>
+    <circle cx="240" cy="70"  r="1" fill="rgba(255,107,53,0.06)"/>
+    <circle cx="280" cy="70"  r="1" fill="rgba(255,107,53,0.06)"/>
+    <circle cx="320" cy="70"  r="1" fill="rgba(255,107,53,0.06)"/>
+    <circle cx="360" cy="70"  r="1" fill="rgba(255,107,53,0.06)"/>
+    <circle cx="400" cy="70"  r="1" fill="rgba(255,107,53,0.06)"/>
+    <circle cx="440" cy="70"  r="1" fill="rgba(255,107,53,0.06)"/>
+    <circle cx="480" cy="70"  r="1" fill="rgba(255,107,53,0.06)"/>
+    <circle cx="520" cy="70"  r="1" fill="rgba(255,107,53,0.06)"/>
+    <!-- Row 3 -->
+    <circle cx="40"  cy="110" r="1" fill="rgba(255,107,53,0.06)"/>
+    <circle cx="80"  cy="110" r="1" fill="rgba(255,107,53,0.06)"/>
+    <circle cx="120" cy="110" r="1" fill="rgba(255,107,53,0.06)"/>
+    <circle cx="160" cy="110" r="1" fill="rgba(255,107,53,0.06)"/>
+    <circle cx="200" cy="110" r="1" fill="rgba(255,107,53,0.06)"/>
+    <circle cx="240" cy="110" r="1" fill="rgba(255,107,53,0.06)"/>
+    <circle cx="280" cy="110" r="1" fill="rgba(255,107,53,0.06)"/>
+    <circle cx="320" cy="110" r="1" fill="rgba(255,107,53,0.06)"/>
+    <circle cx="360" cy="110" r="1" fill="rgba(255,107,53,0.06)"/>
+    <circle cx="400" cy="110" r="1" fill="rgba(255,107,53,0.06)"/>
+    <circle cx="440" cy="110" r="1" fill="rgba(255,107,53,0.06)"/>
+    <circle cx="480" cy="110" r="1" fill="rgba(255,107,53,0.06)"/>
+    <circle cx="520" cy="110" r="1" fill="rgba(255,107,53,0.06)"/>
+    <!-- Row 4 -->
+    <circle cx="40"  cy="150" r="1" fill="rgba(255,107,53,0.06)"/>
+    <circle cx="80"  cy="150" r="1" fill="rgba(255,107,53,0.06)"/>
+    <circle cx="120" cy="150" r="1" fill="rgba(255,107,53,0.06)"/>
+    <circle cx="160" cy="150" r="1" fill="rgba(255,107,53,0.06)"/>
+    <circle cx="200" cy="150" r="1" fill="rgba(255,107,53,0.06)"/>
+    <circle cx="240" cy="150" r="1" fill="rgba(255,107,53,0.06)"/>
+    <circle cx="280" cy="150" r="1" fill="rgba(255,107,53,0.06)"/>
+    <circle cx="320" cy="150" r="1" fill="rgba(255,107,53,0.06)"/>
+    <circle cx="360" cy="150" r="1" fill="rgba(255,107,53,0.06)"/>
+    <circle cx="400" cy="150" r="1" fill="rgba(255,107,53,0.06)"/>
+    <circle cx="440" cy="150" r="1" fill="rgba(255,107,53,0.06)"/>
+    <circle cx="480" cy="150" r="1" fill="rgba(255,107,53,0.06)"/>
+    <circle cx="520" cy="150" r="1" fill="rgba(255,107,53,0.06)"/>
+  </g>
+
+  <!-- Ambient glow overlay -->
+  <rect width="560" height="180" rx="20" fill="url(#ambientGlow)"/>
+
+  <!-- Vignette -->
+  <rect width="560" height="180" rx="20" fill="url(#vignette)"/>
+
+  <!-- ── Icon area: ambient blob ────────────────────────────────── -->
+  <circle cx="90" cy="90" r="54" fill="#FF6B35" opacity="0.09" filter="url(#boxGlow)"/>
+
+  <!-- ── Icon container box ────────────────────────────────────── -->
+  <rect x="28" y="28" width="124" height="124" rx="22"
+        fill="rgba(255,107,53,0.09)"
+        stroke="rgba(255,107,53,0.28)"
+        stroke-width="1.25"/>
+
+  <!-- Inner highlight (top edge shimmer) -->
+  <rect x="28" y="28" width="124" height="2" rx="1"
+        fill="rgba(255,107,53,0.18)"/>
+
+  <!-- ── Cursor-spark icon ──────────────────────────────────────── -->
+  <!--
+    Original 20×20 paths scaled 4.2× and centered inside the 124×124 box.
+    Content visual bounds on the original: ~x[3.5–18] y[3.5–17]
+    At 4.2× and offset (28+16, 28+16) = (44, 44):
+      visual: x[44+14.7–44+75.6], y[44+14.7–44+71.4]
+             = x[58.7–119.6],    y[58.7–115.4]
+    Center ≈ (89, 87) — very close to box center (90, 90). ✓
+  -->
+  <g transform="translate(44, 44) scale(4.2)" filter="url(#iconGlow)">
+    <!-- Main cursor/wand arrow -->
+    <path
+      d="M3.5 3.5L3.5 15L8 10.5L10.5 17L13.5 15.8L11 9.5L16 9.5L3.5 3.5Z"
+      fill="url(#iconGrad)"
+    />
+    <!-- Spark circles (trailing particles) -->
+    <circle cx="16.5" cy="5"   r="1.8" fill="#FF6B35" opacity="0.70"/>
+    <circle cx="18"   cy="9.5" r="1.1" fill="#FF6B35" opacity="0.50"/>
+    <circle cx="14.5" cy="3"   r="0.9" fill="#FF6B35" opacity="0.30"/>
+  </g>
+
+  <!-- ── Divider ────────────────────────────────────────────────── -->
+  <line x1="176" y1="44" x2="176" y2="136"
+        stroke="rgba(255,255,255,0.07)" stroke-width="1"/>
+
+  <!-- ── Wordmark ──────────────────────────────────────────────── -->
+
+  <!-- "UI" — orange, monospace, tight tracking -->
+  <text
+    x="196" y="100"
+    font-family="'JetBrains Mono', 'SF Mono', 'Fira Code', 'Courier New', monospace"
+    font-size="58"
+    font-weight="700"
+    fill="#FF6B35"
+    letter-spacing="-1"
+    filter="url(#textGlow)"
+  >UI</text>
+
+  <!-- "Wiz" — warm white, geometric display -->
+  <text
+    x="272" y="100"
+    font-family="'Syne', 'Helvetica Neue', 'Arial Black', sans-serif"
+    font-size="58"
+    font-weight="800"
+    fill="#E8ECF4"
+    letter-spacing="-2"
+  >Wiz</text>
+
+  <!-- ── Tagline ────────────────────────────────────────────────── -->
+  <text
+    x="196" y="126"
+    font-family="'JetBrains Mono', 'SF Mono', monospace"
+    font-size="11"
+    font-weight="400"
+    fill="rgba(136,146,170,0.75)"
+    letter-spacing="4"
+  >AI UI GENERATOR</text>
+
+  <!-- ── Outer border ───────────────────────────────────────────── -->
+  <rect width="560" height="180" rx="20"
+        fill="none"
+        stroke="rgba(255,255,255,0.06)"
+        stroke-width="1"/>
+
+</svg>
