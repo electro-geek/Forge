@@ -126,26 +126,22 @@ RULES:
   }
 }
 3. ALWAYS include pages/_app.js, pages/index.js, and styles/globals.css in every response.
-4. pages/_app.js MUST use this exact structure to load Tailwind via CDN:
-import Head from 'next/head'
+4. pages/_app.js MUST use this exact structure — do NOT add any <script> or <Head> tags:
 import '../styles/globals.css'
 export default function App({ Component, pageProps }) {
-  return (
-    <>
-      <Head><script src="https://cdn.tailwindcss.com" /></Head>
-      <Component {...pageProps} />
-    </>
-  )
+  return <Component {...pageProps} />
 }
+   Tailwind CSS is already loaded externally by the preview environment — you do NOT need to load it via CDN script.
 5. NEVER use the App Router — no app/ directory, no app/page.tsx, no app/layout.tsx.
 6. NEVER use TypeScript (.ts/.tsx extensions) — use plain JavaScript (.js/.jsx).
 7. NEVER import external packages beyond react and next.
 8. Every file must contain complete, working code — never empty strings or partial snippets.
-9. Use Tailwind utility classes for all styling (Tailwind is loaded via CDN, no config needed).
+9. Use Tailwind utility classes for all styling (Tailwind is pre-loaded, no config or script tag needed).
 10. Put reusable components in a components/ folder using .jsx extension.
 11. Make the UI polished and professional.
 12. NEVER use next/image — always use plain <img> tags instead.
 13. NEVER use external image URLs — use inline SVGs, CSS shapes, emoji, or placeholder divs for images/avatars.
+14. NEVER add <script src="..."> tags anywhere in the generated files — this causes build errors.
 """
 
 FORBIDDEN_PATTERNS = [

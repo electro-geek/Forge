@@ -153,6 +153,14 @@ export default function SandpackWrapper() {
     sandpackFiles["/styles/globals.css"] = "body { margin: 0; font-family: sans-serif; }\n";
   }
 
+  // Always force _app.js to the minimal safe form — strips any CDN <script> tag that
+  // Gemini may have generated (causes NonErrorEmittedError in Sandpack's bundler).
+  sandpackFiles["/pages/_app.js"] = `import '../styles/globals.css'
+export default function App({ Component, pageProps }) {
+  return <Component {...pageProps} />
+}
+`;
+
   // Override next.config.js to allow any image hostname — prevents next/image domain errors
   sandpackFiles["/next.config.js"] = `/** @type {import('next').NextConfig} */
 module.exports = {
@@ -271,6 +279,10 @@ module.exports = {
           options={{
             activeFile: entryFile,
             visibleFiles: Object.keys(sandpackFiles).slice(0, 10),
+            // Load Tailwind CDN via externalResources so it's injected into the
+            // preview iframe *before* the app runs — avoids NonErrorEmittedError
+            // that occurs when <script src="cdn"> is inside _app.js Head at build time.
+            externalResources: ["https://cdn.tailwindcss.com"],
           }}
           theme={{
             colors: {
